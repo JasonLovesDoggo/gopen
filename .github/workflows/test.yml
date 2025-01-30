@@ -1,0 +1,116 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false  # Continue with other tests even if one fails
+      matrix:
+        include:
+          # Ubuntu x64 (all supported versions)
+          - os: ubuntu-latest
+            go: ['1.21', '1.20', '1.19']
+          - os: ubuntu-22.04
+            go: ['1.21']
+          - os: ubuntu-20.04
+            go: ['1.21']
+          
+          # Ubuntu ARM64
+          - os: ubuntu-22.04-arm
+            go: ['1.21']
+          
+          # Windows (all supported versions)
+          - os: windows-latest
+            go: ['1.21', '1.20', '1.19']
+          - os: windows-2022
+            go: ['1.21']
+          - os: windows-2019
+            go: ['1.21']
+          
+          # macOS (Intel)
+          - os: macos-13
+            go: ['1.21', '1.20', '1.19']
+          
+          # macOS (Apple Silicon)
+          - os: macos-14
+            go: ['1.21', '1.20']
+
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+
+      - name: Display Go version
+        run: go version
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run tests
+        run: go test -v -race ./...
+        env:
+          CI: true  # Indicates we're in CI environment
+
+  # Separate job for linting
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+
+  # Build check for various architectures
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64, arm, 386]
+        os: [linux, windows, darwin]
+        exclude:
+          # Exclude invalid combinations
+          - os: darwin
+            arch: 386
+          - os: darwin
+            arch: arm
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+        run: go build -v ./...
