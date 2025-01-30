@@ -23,8 +23,6 @@ jobs:
             go: '1.21'
           - os: windows-2022
             go: '1.21'
-          - os: windows-2019
-            go: '1.21'
           - os: macos-14
             go: '1.21'
 
@@ -37,7 +35,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
-          cache: true
+          cache: false
 
       - name: Display Go version
         run: go version
