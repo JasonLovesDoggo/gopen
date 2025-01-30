@@ -10,36 +10,23 @@ on:
 jobs:
   test:
     strategy:
-      fail-fast: false  # Continue with other tests even if one fails
+      fail-fast: false
       matrix:
+        go: ['1.21', '1.20', '1.19']
+        os: [ubuntu-latest, windows-latest, macos-13]
         include:
-          # Ubuntu x64 (all supported versions)
-          - os: ubuntu-latest
-            go: ['1.21', '1.20', '1.19']
           - os: ubuntu-22.04
-            go: ['1.21']
+            go: '1.21'
           - os: ubuntu-20.04
-            go: ['1.21']
-          
-          # Ubuntu ARM64
+            go: '1.21'
           - os: ubuntu-22.04-arm
-            go: ['1.21']
-          
-          # Windows (all supported versions)
-          - os: windows-latest
-            go: ['1.21', '1.20', '1.19']
+            go: '1.21'
           - os: windows-2022
-            go: ['1.21']
+            go: '1.21'
           - os: windows-2019
-            go: ['1.21']
-          
-          # macOS (Intel)
-          - os: macos-13
-            go: ['1.21', '1.20', '1.19']
-          
-          # macOS (Apple Silicon)
+            go: '1.21'
           - os: macos-14
-            go: ['1.21', '1.20']
+            go: '1.21'
 
     runs-on: ${{ matrix.os }}
     

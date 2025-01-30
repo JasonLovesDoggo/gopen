@@ -15,13 +15,19 @@ A lightweight, cross-platform Go library for opening URLs in the system's defaul
 - Thoroughly tested
 
 ## Installation
-
+### Library
 ```bash
 go get github.com/jasonlovesdoggo/gopen
 ```
 
+### CLI
+```bash
+go install github.com/jasonlovesdoggo/gopen/cmd/gopen@latest
+````
+
 ## Usage
 
+### Library
 ```go
 package main
 
@@ -36,6 +42,11 @@ func main() {
         fmt.Printf("Failed to open URL: %v\n", err)
     }
 }
+```
+
+### CLI
+```bash
+gopen https://jasoncameron.dev
 ```
 
 ## Platform Support
@@ -89,4 +100,4 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
-This project was inspired by the Rust [open](https://github.com/Byron/open-rs) crate.
+This project was inspired by the Rust [open-rs](https://github.com/Byron/open-rs) crate and [this](https://stackoverflow.com/questions/39320371/how-start-web-server-to-open-page-in-browser-in-golang) stack overflow post
